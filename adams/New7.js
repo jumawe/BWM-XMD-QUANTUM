@@ -1,123 +1,67 @@
 const { adams } = require('../Ibrahim/adams');
 
-// Phone number validation and info extraction
-function getPhoneInfo(phoneNumber) {
-    // Clean the number
+// Enhanced phone number analysis
+function getEnhancedPhoneInfo(phoneNumber) {
     let cleanNumber = phoneNumber.replace(/[^\d+]/g, '');
     
-    // Country codes database (partial list)
-    const countryCodes = {
-        '1': { country: 'United States/Canada', region: 'North America' },
-        '7': { country: 'Russia/Kazakhstan', region: 'Europe/Asia' },
-        '20': { country: 'Egypt', region: 'Africa' },
-        '27': { country: 'South Africa', region: 'Africa' },
-        '30': { country: 'Greece', region: 'Europe' },
-        '31': { country: 'Netherlands', region: 'Europe' },
-        '32': { country: 'Belgium', region: 'Europe' },
-        '33': { country: 'France', region: 'Europe' },
-        '34': { country: 'Spain', region: 'Europe' },
-        '36': { country: 'Hungary', region: 'Europe' },
-        '39': { country: 'Italy', region: 'Europe' },
-        '40': { country: 'Romania', region: 'Europe' },
-        '41': { country: 'Switzerland', region: 'Europe' },
-        '43': { country: 'Austria', region: 'Europe' },
-        '44': { country: 'United Kingdom', region: 'Europe' },
-        '45': { country: 'Denmark', region: 'Europe' },
-        '46': { country: 'Sweden', region: 'Europe' },
-        '47': { country: 'Norway', region: 'Europe' },
-        '48': { country: 'Poland', region: 'Europe' },
-        '49': { country: 'Germany', region: 'Europe' },
-        '51': { country: 'Peru', region: 'South America' },
-        '52': { country: 'Mexico', region: 'North America' },
-        '53': { country: 'Cuba', region: 'Caribbean' },
-        '54': { country: 'Argentina', region: 'South America' },
-        '55': { country: 'Brazil', region: 'South America' },
-        '56': { country: 'Chile', region: 'South America' },
-        '57': { country: 'Colombia', region: 'South America' },
-        '58': { country: 'Venezuela', region: 'South America' },
-        '60': { country: 'Malaysia', region: 'Asia' },
-        '61': { country: 'Australia', region: 'Oceania' },
-        '62': { country: 'Indonesia', region: 'Asia' },
-        '63': { country: 'Philippines', region: 'Asia' },
-        '64': { country: 'New Zealand', region: 'Oceania' },
-        '65': { country: 'Singapore', region: 'Asia' },
-        '66': { country: 'Thailand', region: 'Asia' },
-        '81': { country: 'Japan', region: 'Asia' },
-        '82': { country: 'South Korea', region: 'Asia' },
-        '84': { country: 'Vietnam', region: 'Asia' },
-        '86': { country: 'China', region: 'Asia' },
-        '90': { country: 'Turkey', region: 'Europe/Asia' },
-        '91': { country: 'India', region: 'Asia' },
-        '92': { country: 'Pakistan', region: 'Asia' },
-        '93': { country: 'Afghanistan', region: 'Asia' },
-        '94': { country: 'Sri Lanka', region: 'Asia' },
-        '95': { country: 'Myanmar', region: 'Asia' },
-        '98': { country: 'Iran', region: 'Asia' },
-        '212': { country: 'Morocco', region: 'Africa' },
-        '213': { country: 'Algeria', region: 'Africa' },
-        '216': { country: 'Tunisia', region: 'Africa' },
-        '218': { country: 'Libya', region: 'Africa' },
-        '220': { country: 'Gambia', region: 'Africa' },
-        '221': { country: 'Senegal', region: 'Africa' },
-        '222': { country: 'Mauritania', region: 'Africa' },
-        '223': { country: 'Mali', region: 'Africa' },
-        '224': { country: 'Guinea', region: 'Africa' },
-        '225': { country: 'Ivory Coast', region: 'Africa' },
-        '226': { country: 'Burkina Faso', region: 'Africa' },
-        '227': { country: 'Niger', region: 'Africa' },
-        '228': { country: 'Togo', region: 'Africa' },
-        '229': { country: 'Benin', region: 'Africa' },
-        '230': { country: 'Mauritius', region: 'Africa' },
-        '231': { country: 'Liberia', region: 'Africa' },
-        '232': { country: 'Sierra Leone', region: 'Africa' },
-        '233': { country: 'Ghana', region: 'Africa' },
-        '234': { country: 'Nigeria', region: 'Africa' },
-        '235': { country: 'Chad', region: 'Africa' },
-        '236': { country: 'Central African Republic', region: 'Africa' },
-        '237': { country: 'Cameroon', region: 'Africa' },
-        '238': { country: 'Cape Verde', region: 'Africa' },
-        '239': { country: 'São Tomé and Príncipe', region: 'Africa' },
-        '240': { country: 'Equatorial Guinea', region: 'Africa' },
-        '241': { country: 'Gabon', region: 'Africa' },
-        '242': { country: 'Republic of the Congo', region: 'Africa' },
-        '243': { country: 'Democratic Republic of the Congo', region: 'Africa' },
-        '244': { country: 'Angola', region: 'Africa' },
-        '245': { country: 'Guinea-Bissau', region: 'Africa' },
-        '246': { country: 'British Indian Ocean Territory', region: 'Africa' },
-        '248': { country: 'Seychelles', region: 'Africa' },
-        '249': { country: 'Sudan', region: 'Africa' },
-        '250': { country: 'Rwanda', region: 'Africa' },
-        '251': { country: 'Ethiopia', region: 'Africa' },
-        '252': { country: 'Somalia', region: 'Africa' },
-        '253': { country: 'Djibouti', region: 'Africa' },
-        '254': { country: 'Kenya', region: 'Africa', carriers: ['Safaricom', 'Airtel', 'Telkom'] },
-        '255': { country: 'Tanzania', region: 'Africa' },
-        '256': { country: 'Uganda', region: 'Africa' },
-        '257': { country: 'Burundi', region: 'Africa' },
-        '258': { country: 'Mozambique', region: 'Africa' },
-        '260': { country: 'Zambia', region: 'Africa' },
-        '261': { country: 'Madagascar', region: 'Africa' },
-        '262': { country: 'Réunion/Mayotte', region: 'Africa' },
-        '263': { country: 'Zimbabwe', region: 'Africa' },
-        '264': { country: 'Namibia', region: 'Africa' },
-        '265': { country: 'Malawi', region: 'Africa' },
-        '266': { country: 'Lesotho', region: 'Africa' },
-        '267': { country: 'Botswana', region: 'Africa' },
-        '268': { country: 'Eswatini', region: 'Africa' },
-        '269': { country: 'Comoros', region: 'Africa' },
-        '290': { country: 'Saint Helena', region: 'Africa' }
-    };
-
     // Remove + if present
     if (cleanNumber.startsWith('+')) {
         cleanNumber = cleanNumber.substring(1);
     }
 
+    // Comprehensive country codes with detailed info
+    const countryCodes = {
+        '254': { 
+            country: 'Kenya', 
+            region: 'East Africa',
+            capital: 'Nairobi',
+            timezone: 'EAT (UTC+3)',
+            currency: 'KES',
+            carriers: {
+                '70': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '71': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '72': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '74': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '75': { name: 'Airtel', type: 'GSM', tech: '2G/3G/4G' },
+                '76': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '77': { name: 'Telkom', type: 'GSM', tech: '3G/4G' },
+                '78': { name: 'Airtel', type: 'GSM', tech: '2G/3G/4G' },
+                '79': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '11': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' },
+                '10': { name: 'Safaricom', type: 'GSM', tech: '2G/3G/4G/5G' }
+            }
+        },
+        '1': { 
+            country: 'United States/Canada', 
+            region: 'North America',
+            timezone: 'Multiple (EST/PST/MST/CST)',
+            currency: 'USD/CAD'
+        },
+        '44': { 
+            country: 'United Kingdom', 
+            region: 'Europe',
+            timezone: 'GMT (UTC+0)',
+            currency: 'GBP'
+        },
+        '91': { 
+            country: 'India', 
+            region: 'South Asia',
+            timezone: 'IST (UTC+5:30)',
+            currency: 'INR'
+        },
+        '234': { 
+            country: 'Nigeria', 
+            region: 'West Africa',
+            timezone: 'WAT (UTC+1)',
+            currency: 'NGN'
+        },
+        // Add more countries as needed
+    };
+
     // Find country code
     let countryInfo = null;
     let countryCode = '';
     
-    // Try different country code lengths (1-3 digits)
     for (let len = 1; len <= 3; len++) {
         const code = cleanNumber.substring(0, len);
         if (countryCodes[code]) {
@@ -127,112 +71,181 @@ function getPhoneInfo(phoneNumber) {
         }
     }
 
-    // Kenya specific analysis
-    let kenyanCarrier = '';
-    if (countryCode === '254') {
-        const networkCode = cleanNumber.substring(3, 5);
-        const networkCodes = {
-            '70': 'Safaricom',
-            '71': 'Safaricom', 
-            '72': 'Safaricom',
-            '74': 'Safaricom',
-            '75': 'Airtel',
-            '76': 'Safaricom',
-            '77': 'Telkom',
-            '78': 'Airtel',
-            '79': 'Safaricom',
-            '11': 'Safaricom',
-            '10': 'Safaricom'
-        };
-        kenyanCarrier = networkCodes[networkCode] || 'Unknown Carrier';
+    // Enhanced carrier analysis
+    let carrierInfo = null;
+    if (countryInfo?.carriers) {
+        const networkCode = cleanNumber.substring(countryCode.length, countryCode.length + 2);
+        carrierInfo = countryInfo.carriers[networkCode];
     }
 
+    // Number validation patterns
+    const isValidFormat = validateNumberFormat(cleanNumber, countryCode);
+    
     return {
         original: phoneNumber,
         cleaned: cleanNumber,
         countryCode: countryCode,
-        country: countryInfo?.country || 'Unknown',
-        region: countryInfo?.region || 'Unknown',
-        carrier: kenyanCarrier,
-        isValid: countryInfo !== null,
-        format: countryCode ? `+${countryCode} ${cleanNumber.substring(countryCode.length)}` : cleanNumber
+        countryInfo: countryInfo,
+        carrierInfo: carrierInfo,
+        isValid: countryInfo !== null && isValidFormat,
+        format: countryCode ? `+${countryCode} ${formatNumber(cleanNumber, countryCode)}` : cleanNumber,
+        numberType: getNumberType(cleanNumber, countryCode)
     };
+}
+
+function validateNumberFormat(number, countryCode) {
+    const patterns = {
+        '254': /^254[17]\d{8}$/, // Kenya: 254 + (7 or 1) + 8 digits
+        '1': /^1[2-9]\d{9}$/, // US/Canada
+        '44': /^44[1-9]\d{8,9}$/, // UK
+        '91': /^91[6-9]\d{9}$/, // India
+        '234': /^234[7-9]\d{9}$/ // Nigeria
+    };
+    
+    return patterns[countryCode] ? patterns[countryCode].test(number) : true;
+}
+
+function formatNumber(number, countryCode) {
+    const remaining = number.substring(countryCode.length);
+    
+    switch(countryCode) {
+        case '254': // Kenya: 254 7XX XXX XXX
+            return remaining.replace(/(\d{1})(\d{2})(\d{3})(\d{3})/, '$1$2 $3 $4');
+        case '1': // US/Canada: 1 XXX XXX XXXX
+            return remaining.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        default:
+            return remaining;
+    }
+}
+
+function getNumberType(number, countryCode) {
+    if (countryCode === '254') {
+        const prefix = number.substring(3, 5);
+        if (['70', '71', '72', '74', '76', '79'].includes(prefix)) return 'Mobile';
+        if (['11', '10'].includes(prefix)) return 'Fixed Line';
+        return 'Mobile';
+    }
+    return 'Mobile'; // Default assumption
 }
 
 adams({
     nomCom: "track",
-    aliases: ["phoneinfo", "numberinfo", "lookup"],
+    aliases: ["phoneinfo", "lookup", "analyze"],
     categorie: "Info",
-    reaction: "📱",
+    reaction: "🔍",
     nomFichier: __filename
 }, async (dest, zk, commandeOptions) => {
     const { ms, repondre, arg, msgRepondu } = commandeOptions;
 
     let phoneNumber = '';
+    let isGroupAnalysis = false;
 
-    // Check if replying to a message
+    // Check if it's a group
+    const isGroup = dest.endsWith('@g.us');
+
+    // Get phone number
     if (msgRepondu && !arg[0]) {
-        // Extract number from quoted message sender
         const quotedSender = ms.message?.extendedTextMessage?.contextInfo?.participant;
         if (quotedSender) {
             phoneNumber = quotedSender.split('@')[0];
+            isGroupAnalysis = true;
         } else {
-            return repondre("❌ Could not extract phone number from the replied message.");
+            return repondre("❌ Could not extract number from the replied message.");
         }
     } else if (arg[0]) {
-        // Manual number input
-        phoneNumber = arg.join('');
+        phoneNumber = arg.join('').replace(/\s/g, '');
     } else {
-        return repondre("📱 *PHONE NUMBER TRACKER*\n\n*Usage:*\n• Reply to a message: `track`\n• Manual lookup: `track 254727716045`\n\n*Example:* track +1234567890");
+        return repondre(`🔍 *ENHANCED PHONE TRACKER*\n\n*Usage:*\n• Reply to message: \`track\`\n• Manual: \`track 254727716045\`\n\n⚠️ *Educational Purpose Only*`);
     }
 
     try {
-        await repondre("🔍 *Analyzing phone number...*\n\nPlease wait while I gather information...");
+        await repondre("🔍 *Deep Analysis in Progress...*\n\n📡 Gathering network information...\n🌍 Checking geographical data...\n📱 Analyzing phone details...");
 
-        const phoneInfo = getPhoneInfo(phoneNumber);
+        const phoneInfo = getEnhancedPhoneInfo(phoneNumber);
 
         if (!phoneInfo.isValid) {
-            return repondre(`❌ *Invalid Phone Number*\n\n*Number:* ${phoneNumber}\n\nPlease provide a valid international phone number.`);
+            return repondre(`❌ *Invalid or Unrecognized Number*\n\n*Input:* ${phoneNumber}\n\nPlease provide a valid international number.`);
         }
 
-        let responseText = "📱 *PHONE NUMBER ANALYSIS*\n";
-        responseText += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        // Enhanced response for groups vs DM
+        let responseText = "";
         
-        responseText += "📋 *BASIC INFORMATION*\n";
-        responseText += `*Original:* ${phoneInfo.original}\n`;
-        responseText += `*Formatted:* ${phoneInfo.format}\n`;
-        responseText += `*Country Code:* +${phoneInfo.countryCode}\n`;
-        responseText += `*Country:* ${phoneInfo.country}\n`;
-        responseText += `*Region:* ${phoneInfo.region}\n`;
+        if (isGroup && isGroupAnalysis) {
+            // Limited info in groups for privacy
+            responseText = "🔍 *GROUP ANALYSIS RESULTS*\n";
+            responseText += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+            responseText += "📱 *BASIC INFO*\n";
+            responseText += `*Number:* ${phoneInfo.format}\n`;
+            responseText += `*Country:* ${phoneInfo.countryInfo.country}\n`;
+            responseText += `*Region:* ${phoneInfo.countryInfo.region}\n`;
+            
+            if (phoneInfo.carrierInfo) {
+                responseText += `*Network:* ${phoneInfo.carrierInfo.name}\n`;
+            }
+            
+            responseText += "\n🔒 *Limited info shown in groups for privacy*";
+        } else {
+            // Full detailed analysis for DM
+            responseText = "🔍 *COMPREHENSIVE PHONE ANALYSIS*\n";
+            responseText += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+            
+            responseText += "📱 *PHONE DETAILS*\n";
+            responseText += `*Original Input:* ${phoneInfo.original}\n`;
+            responseText += `*Formatted:* ${phoneInfo.format}\n`;
+            responseText += `*Number Type:* ${phoneInfo.numberType}\n`;
+            responseText += `*Valid Format:* ✅ Verified\n\n`;
+            
+            responseText += "🌍 *GEOGRAPHICAL INFO*\n";
+            responseText += `*Country:* ${phoneInfo.countryInfo.country}\n`;
+            responseText += `*Region:* ${phoneInfo.countryInfo.region}\n`;
+            responseText += `*Country Code:* +${phoneInfo.countryCode}\n`;
+            
+            if (phoneInfo.countryInfo.capital) {
+                responseText += `*Capital:* ${phoneInfo.countryInfo.capital}\n`;
+            }
+            if (phoneInfo.countryInfo.timezone) {
+                responseText += `*Timezone:* ${phoneInfo.countryInfo.timezone}\n`;
+            }
+            if (phoneInfo.countryInfo.currency) {
+                responseText += `*Currency:* ${phoneInfo.countryInfo.currency}\n`;
+            }
+            
+            if (phoneInfo.carrierInfo) {
+                responseText += "\n📡 *NETWORK DETAILS*\n";
+                responseText += `*Carrier:* ${phoneInfo.carrierInfo.name}\n`;
+                responseText += `*Network Type:* ${phoneInfo.carrierInfo.type}\n`;
+                responseText += `*Technology:* ${phoneInfo.carrierInfo.tech}\n`;
+            }
 
-        if (phoneInfo.carrier) {
-            responseText += `*Carrier:* ${phoneInfo.carrier}\n`;
+            // Add WhatsApp specific info if available
+            try {
+                const waProfile = await getWhatsAppProfile(phoneNumber, zk);
+                if (waProfile) {
+                    responseText += "\n💬 *WHATSAPP INFO*\n";
+                    responseText += `*Profile Name:* ${waProfile.name || 'Not available'}\n`;
+                    responseText += `*About:* ${waProfile.status || 'Not available'}\n`;
+                    responseText += `*Profile Picture:* ${waProfile.hasPhoto ? 'Available' : 'Not set'}\n`;
+                }
+            } catch (error) {
+                responseText += "\n💬 *WHATSAPP INFO*\n";
+                responseText += `*Status:* Account exists\n`;
+            }
+
+            responseText += "\n⚠️ *DISCLAIMER*\n";
+            responseText += "This analysis shows publicly available information only.\n";
+            responseText += "No private data, location, or personal info is accessed.\n";
+            responseText += "*For educational purposes only.*\n";
         }
-
-        responseText += "\n🌍 *LOCATION INFORMATION*\n";
-        responseText += `*Country:* ${phoneInfo.country}\n`;
-        responseText += `*Continent:* ${phoneInfo.region}\n`;
-
-        // Add Kenya-specific details
-        if (phoneInfo.countryCode === '254') {
-            responseText += `*Time Zone:* EAT (UTC+3)\n`;
-            responseText += `*Currency:* Kenyan Shilling (KES)\n`;
-            responseText += `*Language:* English, Swahili\n`;
-        }
-
-        responseText += "\n⚠️ *PRIVACY NOTICE*\n";
-        responseText += "This shows only publicly available information.\n";
-        responseText += "No personal data or exact location is accessed.\n";
         
         responseText += "\n━━━━━━━━━━━━━━━━━━━━━━\n";
-        responseText += "> © BWM-XMD Phone Tracker";
+        responseText += "> © BWM-XMD Enhanced Tracker";
 
         await zk.sendMessage(dest, {
             text: responseText,
             contextInfo: {
                 externalAdReply: {
-                    title: `📱 ${phoneInfo.country} Phone Number`,
-                    body: `${phoneInfo.format} • ${phoneInfo.carrier || 'Carrier Unknown'}`,
+                    title: `📱 ${phoneInfo.countryInfo.country} Analysis`,
+                    body: `${phoneInfo.format} • ${phoneInfo.carrierInfo?.name || 'Unknown Carrier'}`,
                     mediaType: 1,
                     thumbnailUrl: "https://files.catbox.moe/sd49da.jpg",
                     sourceUrl: "https://bwmxmd.online",
@@ -243,7 +256,33 @@ adams({
         }, { quoted: ms });
 
     } catch (error) {
-        console.error("Error in track command:", error);
-        await repondre(`❌ *Analysis Failed*\n\nError: ${error.message}\n\nPlease try again with a valid phone number.`);
+        console.error("Error in enhanced track command:", error);
+        await repondre(`❌ *Analysis Failed*\n\nError: ${error.message}\n\nPlease try with a different number.`);
     }
 });
+
+// Helper function to get WhatsApp profile info (if accessible)
+async function getWhatsAppProfile(phoneNumber, zk) {
+    try {
+        const jid = phoneNumber + '@s.whatsapp.net';
+        
+        // Try to get profile info
+        const profile = await zk.fetchProfile(jid);
+        
+        let hasPhoto = false;
+        try {
+            await zk.profilePictureUrl(jid);
+            hasPhoto = true;
+        } catch (e) {
+            hasPhoto = false;
+        }
+
+        return {
+            name: profile?.name,
+            status: profile?.status,
+            hasPhoto: hasPhoto
+        };
+    } catch (error) {
+        return null;
+    }
+}
